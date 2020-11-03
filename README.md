@@ -18,6 +18,11 @@ Exercise: Write a simple fizz-buzz REST server.
  go get github.com/tcharlot-datasweet/fizzbuzz
  go run cmd\server.go
 
+ # Call /fizzbuzz API
  curl -XPOST localhost:8081/fizzbuzz -H "Content-type:application/json"
  curl -XPOST localhost:8081/fizzbuzz -H "Content-type:application/json" -d '{"limit": 10}'
+ curl -XPOST localhost:8081/fizzbuzz -H "Content-type:application/json" -d '{"limit": 152, "int1": 7, "str1": "FIZZZZ", "int2": 8, "str2": "BUZZZZZ"}'
+
+ # Call /stats API
+ curl localhost:8081/stats
  ```
