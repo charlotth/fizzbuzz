@@ -29,6 +29,7 @@ func (s *server) init() error {
 	s.router.Use(middleware.Logger)
 	s.router.Use(middleware.Recoverer)
 	s.router.Use(middleware.Timeout(30 * time.Second))
+	s.router.Use(WithStats(&apiStatsFormatter{}, s.stats))
 
 	// Index
 	s.router.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -48,11 +49,14 @@ func (s *server) init() error {
 
 	// Fizzbuzz endpoint
 	s.router.Post("/fizzbuzz", s.postFizzbuzz)
+	s.router.Get("/fizzbuzz", s.getFizzbuzz)
 
 	// Stats endpoint
-	s.router.Get("/stats", func(w http.ResponseWriter, r *http.Request) {
-		mu := s.stats.MostUsed("fizzbuzz")
-		render.JSON(w, r, mu)
+	s.router.Get("/stats/all", func(w http.ResponseWriter, r *http.Request) {
+		render.JSON(w, r, s.stats.All())
+	})
+	s.router.Get("/stats/mostused", func(w http.ResponseWriter, r *http.Request) {
+		render.JSON(w, r, s.stats.MostUsed())
 	})
 
 	return nil

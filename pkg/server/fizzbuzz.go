@@ -23,10 +23,6 @@ func (req *FizzbuzzRequest) Bind(r *http.Request) error {
 	return nil
 }
 
-func (req *FizzbuzzRequest) StatsKey() string {
-	return "fizzbuzz"
-}
-
 func (s *server) postFizzbuzz(w http.ResponseWriter, r *http.Request) {
 	var req FizzbuzzRequest
 
@@ -52,9 +48,6 @@ func (s *server) postFizzbuzz(w http.ResponseWriter, r *http.Request) {
 		req.BuzzString = "buzz"
 	}
 
-	// Store stats
-	s.stats.Add(&req)
-
 	// call fizzbuzz
 	str := fizzbuzz.String(
 		fizzbuzz.To(req.Limit),
@@ -63,4 +56,23 @@ func (s *server) postFizzbuzz(w http.ResponseWriter, r *http.Request) {
 	)
 
 	render.PlainText(w, r, str)
+}
+
+func (s *server) getFizzbuzz(w http.ResponseWriter, r *http.Request) {
+	req := FizzbuzzRequest{
+		Limit:        QueryInt(r, "limit", 100),
+		FizzMultiple: QueryInt(r, "int1", 3),
+		FizzString:   QueryString(r, "str1", "fizz"),
+		BuzzMultiple: QueryInt(r, "int2", 5),
+		BuzzString:   QueryString(r, "str2", "buzz"),
+	}
+
+	// call fizzbuzz
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusAccepted)
+	fizzbuzz.Write(w,
+		fizzbuzz.To(req.Limit),
+		fizzbuzz.Fizz(req.FizzMultiple, req.FizzString),
+		fizzbuzz.Buzz(req.BuzzMultiple, req.BuzzString),
+	)
 }
