@@ -1,5 +1,9 @@
 package fizzbuzz
 
+import (
+	"io"
+)
+
 // Options will configure the fizzbuzz
 type Options struct {
 	From      int
@@ -7,6 +11,7 @@ type Options struct {
 	Fizz      Multiple
 	Buzz      Multiple
 	Separator string
+	Writer    io.Writer
 }
 
 // Multiple will replace multiple of {Multiple} by {Str}

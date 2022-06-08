@@ -23,6 +23,17 @@ Exercise: Write a simple fizz-buzz REST server.
  curl -XPOST localhost:8081/fizzbuzz -H "Content-type:application/json" -d '{"limit": 10}'
  curl -XPOST localhost:8081/fizzbuzz -H "Content-type:application/json" -d '{"limit": 152, "int1": 7, "str1": "FIZZZZ", "int2": 8, "str2": "BUZZZZZ"}'
 
+# NEW with GET 
+curl localhost:8081/fizzbuzz
+curl localhost:8081/fizzbuzz?limit=10
+curl localhost:8081/fizzbuzz?limit=152&int1=7&str1=FIZZZZ&int2=8&str2=BUZZZZZ
+
  # Call /stats API
- curl localhost:8081/stats
+ curl localhost:8081/stats/all
+ curl localhost:8081/stats/mostused
  ```
+
+## Testing
+```bash
+go test -v ./...
+```

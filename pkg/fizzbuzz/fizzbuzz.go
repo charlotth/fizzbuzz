@@ -1,37 +1,61 @@
 package fizzbuzz
 
 import (
+	"io"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
-// String is our main entry point to output a fizzbuzz string
 func String(opt ...Option) string {
-	// configure options
-	options := newOptions(opt...)
-
-	// Check options
-	if options.From <= 0 || options.To <= 0 {
+	var sb strings.Builder
+	if err := Write(&sb, opt...); err != nil {
 		return ""
 	}
+	return sb.String()
+}
 
-	var sb strings.Builder
+// Write is our main entry point to compute the fizzbuzz string
+func Write(w io.Writer, opt ...Option) error {
+	if w == nil {
+		return errors.New("nil writer")
+	}
+
+	// configure options
+	options := newOptions(opt...)
+	if options.From <= 0 {
+		return errors.New("invalid from")
+	}
+	if options.To <= 0 {
+		return errors.New("invalid to")
+	}
 
 	for i := options.From; i <= options.To; i++ {
 		isNumber := true
 		if i%options.Fizz.Multiple == 0 {
-			sb.WriteString(options.Fizz.Str)
+			if _, err := w.Write([]byte(options.Fizz.Str)); err != nil {
+				return errors.Wrapf(err, "writing fizz: %d", i)
+			}
 			isNumber = false
 		}
 		if i%options.Buzz.Multiple == 0 {
-			sb.WriteString(options.Buzz.Str)
+			if _, err := w.Write([]byte(options.Buzz.Str)); err != nil {
+				return errors.Wrapf(err, "writing buzz: %d", i)
+			}
 			isNumber = false
 		}
 		if isNumber {
-			sb.WriteString(strconv.Itoa(i))
+			if _, err := w.Write([]byte(strconv.Itoa(i))); err != nil {
+				return errors.Wrapf(err, "writing number: %d", i)
+			}
 		}
-		sb.WriteString(options.Separator)
-	}
 
-	return strings.TrimSuffix(sb.String(), options.Separator)
+		if i != options.To {
+			if _, err := w.Write([]byte(options.Separator)); err != nil {
+				return errors.Wrapf(err, "writing separator: %d", i)
+			}
+		}
+	}
+	return nil
 }
