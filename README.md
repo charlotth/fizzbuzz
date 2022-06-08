@@ -32,3 +32,8 @@ curl localhost:8081/fizzbuzz?limit=152&int1=7&str1=FIZZZZ&int2=8&str2=BUZZZZZ
  curl localhost:8081/stats/all
  curl localhost:8081/stats/mostused
  ```
+
+## Testing
+```bash
+go test -v ./...
+```
